@@ -1,0 +1,169 @@
+{
+  "name": "Fawed MVP",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "329a38cd-1285-80dd-bab1-d8146b95224c",
+          "mode": "list",
+          "cachedResultName": "Fawaed",
+          "cachedResultUrl": "https://www.notion.so/329a38cd128580ddbab1d8146b95224c"
+        },
+        "title": "={{$json.Title}}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "=Category|select",
+              "selectValue": "={{$json.Category}}"
+            },
+            {
+              "key": "OriginalText|rich_text",
+              "textContent": "={{$json.OriginalText}}"
+            },
+            {
+              "key": "Summary|rich_text",
+              "textContent": "={{$json.Summary}}"
+            },
+            {
+              "key": "Link|url",
+              "ignoreIfEmpty": true,
+              "urlValue": "={{$json.Link}}"
+            },
+            {
+              "key": "Platform|select",
+              "selectValue": "={{$json.Platform}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        176,
+        -176
+      ],
+      "id": "e531e662-fdef-4723-851b-ccbe3e406cb2",
+      "name": "Create a database page"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        32
+      ],
+      "id": "5dceeb4d-3794-4bfb-8c45-5ebe0d423d28",
+      "name": "Telegram Trigger",
+      "webhookId": "c8719cb5-3189-4cd4-b694-96c32379ca6d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -512,
+        -240
+      ],
+      "id": "4add9c71-4038-4f65-8b07-3a74627503fd",
+      "name": "When chat message received",
+      "webhookId": "7ae0a3e1-3057-4284-8052-2826bcceba0c"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an intelligent content analysis assistant.  The input may be: 1. plain text 2. a URL  Your job is to analyze the input and return ONLY valid JSON.  Rules: - The content may be in Arabic or English. - Your output fields (title, summary, tags) must be in the SAME language as the original content. - category must be chosen from this exact list only: [\"معلومات عامة\",\"سياسة\",\"مال ومعلومات اقتصادية\",\"برمجة\",\"علاقات\",\"بودكاست\",\"صحة ومعلومات طبية\",\"إنتاجية\",\"إسلامي\"]  Instructions: - If the input is plain text, analyze it directly. - If the input is a URL, first try to infer the content from the URL itself. - If you can access or understand the page title/content from the URL, use that to improve the result. - If the URL is not fully understandable, still generate the best possible result based on the link text/domain. - Create a short, clear title. - Write a useful summary in 1 to 2 lines. - Generate 2 to 5 relevant tags when possible. - Do not include any explanation outside the JSON. - Do not wrap the response in markdown.  Return JSON with this structure: {   \"title\": \"string\",   \"category\": \"string\",   \"summary\": \"string\",   \"tags\": [\"string\"] }  Input: {{$json.message.text}}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -192,
+        -352
+      ],
+      "id": "ac384cdf-b816-4f7b-864a-78ac08fa327e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        -192
+      ],
+      "id": "d1a57f4b-5d8a-439e-9125-7bd81fb66d1b",
+      "name": "Google Gemini Chat Model"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Create a database page": {
+      "main": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        []
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Create a database page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f432cd45-6be6-40d0-9933-e8c797ccaa38",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1e06ab8fa70765b7854f59324c086b51c7aa39383c439337d61b90cd03201111"
+  },
+  "id": "MqsobA4YhOkSmqBS",
+  "tags": []
+}
